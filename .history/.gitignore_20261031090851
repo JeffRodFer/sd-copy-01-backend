@@ -1,0 +1,15 @@
+# Dependências (nunca sobem para o GitHub)
+node_modules/
+
+# Variáveis de ambiente e segredos
+.env
+
+# Logs de erro e debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Configurações locais da Vercel ou do Sistema Operacional
+.vercel/
+.DS_Store
+Thumbs.db

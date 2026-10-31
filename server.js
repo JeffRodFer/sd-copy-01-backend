@@ -1,6 +1,8 @@
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const app = express();
@@ -17,6 +19,59 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
+
+/* =====================================================
+   MIDDLEWARE: VERIFICAR TOKEN JWT
+===================================================== */
+function verificarToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Formato: "Bearer TOKEN"
+
+  if (!token) {
+    return res.status(401).json({ error: 'Acesso negado. Token não fornecido.' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: 'Token inválido ou expirado.' });
+    }
+
+    req.user = user;
+    next();
+  });
+}
+
+/* =====================================================
+   ROTA DE LOGIN DO ADMINISTRADOR
+===================================================== */
+app.post('/api/admin/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  // Verifica se o utilizador bate com o do .env
+  if (username === process.env.ADMIN_USER) {
+
+    // Compara a palavra-passe digitada com o hash armazenado no .env
+    const senhaCorreta = await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH);
+
+    if (senhaCorreta) {
+      // Gera o token se a palavra-passe estiver correta
+      const token = jwt.sign(
+        { username: username },
+        process.env.JWT_SECRET,
+        { expiresIn: '8h' }
+      );
+
+      return res.json({
+        success: true,
+        token: token,
+        message: 'Login realizado com sucesso!'
+      });
+    }
+  }
+
+  return res.status(401).json({ error: 'Utilizador ou senha inválidos.' });
+});
+
 
 // GET /api/cardapio
 app.get('/api/cardapio', async (req, res) => {
