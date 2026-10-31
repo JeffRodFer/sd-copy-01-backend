@@ -96,8 +96,8 @@ app.post('/admin/login', (req, res) => {
   }
 });
 
-// POST /admin/atualizar-lote
-app.post('/admin/atualizar-lote', async (req, res) => {
+// POST /api/admin/atualizar-lote (Protegido por JWT)
+app.post('/api/admin/atualizar-lote', verificarToken, async (req, res) => {
   const { produtos } = req.body;
   if (!Array.isArray(produtos)) {
     return res.status(400).json({ erro: 'Formato inválido.' });
