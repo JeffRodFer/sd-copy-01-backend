@@ -84,17 +84,7 @@ app.get('/api/cardapio', async (req, res) => {
   }
 });
 
-// POST /admin/login
-app.post('/admin/login', (req, res) => {
-  const { senha } = req.body;
-  const senhaAdmin = process.env.ADMIN_PASSWORD || '123456';
 
-  if (senha === senhaAdmin) {
-    res.json({ autorizado: true, token: 'admin-token-seguro' });
-  } else {
-    res.status(401).json({ autorizado: false, erro: 'Senha incorreta.' });
-  }
-});
 
 // POST /api/admin/atualizar-lote (Protegido por JWT)
 app.post('/api/admin/atualizar-lote', verificarToken, async (req, res) => {
