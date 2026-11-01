@@ -84,6 +84,39 @@ app.get('/api/cardapio', async (req, res) => {
   }
 });
 
+const bcrypt = require('bcryptjs'); 
+
+/* =========================================================
+   ROTA DE LOGIN ADMINISTRATIVO (COM HASH)
+   ========================================================= */
+app.post('/api/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const usuarioCorreto = 'admin';
+    // Substitua este valor pelo HASH real da sua palavra-passe!
+    // (Abaixo está um exemplo de hash bcrypt para a senha '123456')
+    const hashGuardado = '$2a$12$5UBJ1VqEirKW4WKWAU150.1Tqc5Iv8orHAeF5kHtWF4Sn3HLgT4.O';
+
+    // Verifica se o utilizador está correto primeiro
+    if (username !== usuarioCorreto) {
+      return res.status(401).json({ error: 'Utilizador ou palavra-passe incorretos.' });
+    }
+
+    // Compara a palavra-passe que veio do frontend com o hash guardado
+    const senhaValida = await bcrypt.compare(password, hashGuardado);
+
+    if (senhaValida) {
+      res.status(200).json({ success: true, message: 'Login aprovado!' });
+    } else {
+      res.status(401).json({ error: 'Utilizador ou palavra-passe incorretos.' });
+    }
+  } catch (error) {
+    console.error('Erro na validação do login:', error);
+    res.status(500).json({ error: 'Erro interno no servidor.' });
+  }
+});
+
 
 
 // POST /api/admin/atualizar-lote (Protegido por JWT)
