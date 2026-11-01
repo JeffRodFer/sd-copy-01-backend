@@ -84,7 +84,7 @@ app.get('/api/cardapio', async (req, res) => {
   }
 });
 
-const bcrypt = require('bcryptjs');
+
 
 /* =========================================================
    ROTA DE LOGIN ADMINISTRATIVO (COM HASH)
