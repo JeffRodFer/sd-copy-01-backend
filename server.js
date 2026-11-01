@@ -1,7 +1,7 @@
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
@@ -84,7 +84,7 @@ app.get('/api/cardapio', async (req, res) => {
   }
 });
 
-const bcrypt = require('bcryptjs'); 
+const bcrypt = require('bcryptjs');
 
 /* =========================================================
    ROTA DE LOGIN ADMINISTRATIVO (COM HASH)
