@@ -86,11 +86,7 @@ app.get('/api/cardapio', async (req, res) => {
   }
 });
 
-/* =========================================================
-   ROTA PARA ATUALIZAR A DISPONIBILIDADE (PUT)
-   ========================================================= */
-app.put('/api/cardapio/:id', async (req, res) => {
-  // ... resto do seu código continua aqui para baixo ...
+
 
 
   /* =========================================================
