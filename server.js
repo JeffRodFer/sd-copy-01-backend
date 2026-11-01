@@ -7,9 +7,10 @@ require('dotenv').config();
 
 const app = express();
 
+// Configuração de permissões do CORS
 app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'OPTIONS'],
+  origin: '*', // Permite acessos do seu frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
@@ -73,14 +74,23 @@ app.post('/api/admin/login', async (req, res) => {
 });
 
 
-// GET /api/cardapio
-app.get('/api/cardapio', async (req, res) => {
+/* =========================================================
+   ROTA PARA ATUALIZAR A DISPONIBILIDADE (PUT)
+   ========================================================= */
+app.put('/api/cardapio/:id', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, nome, preco, categoria, disponivel, estoque FROM produtos ORDER BY id');
-    res.json(result.rows);
+    const { id } = req.params;
+    const { disponivel } = req.body;
+
+    // Atualiza o campo 'disponivel' do produto específico no banco de dados
+    const query = 'UPDATE produtos SET disponivel = $1 WHERE id = $2';
+    await pool.query(query, [disponivel, id]);
+
+    res.status(200).json({ success: true, message: 'Status atualizado!' });
+
   } catch (err) {
-    console.error("Erro ao buscar cardápio:", err);
-    res.status(500).json({ erro: "Erro interno ao carregar cardápio." });
+    console.error("Erro ao atualizar o item:", err);
+    res.status(500).json({ erro: "Falha ao atualizar no banco de dados." });
   }
 });
 
